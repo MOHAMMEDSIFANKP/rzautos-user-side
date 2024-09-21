@@ -41,10 +41,7 @@ const Footer = () => {
             <div className="logo footer__logo">
               <h1>
                 <Link to="/home" className=" d-flex align-items-center gap-2">
-                  <i class="ri-car-line"></i>
-                  <span>
-                    Rent Car <br /> Service
-                  </span>
+                 <img src="" alt="" />
                 </Link>
               </h1>
             </div>
@@ -94,14 +91,14 @@ const Footer = () => {
             </div>
           </Col>
 
-          <Col lg="12">
+          {/* <Col lg="12">
             <div className="footer__bottom">
               <p className="section__description d-flex align-items-center justify-content-center gap-1 pt-4">
                 <i class="ri-copyright-line"></i>Copyright {year}, Developed by
                 Muhibur Rahman. All rights reserved.
               </p>
             </div>
-          </Col>
+          </Col> */}
         </Row>
       </Container>
     </footer>

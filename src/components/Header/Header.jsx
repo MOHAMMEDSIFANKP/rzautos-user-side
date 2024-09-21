@@ -13,7 +13,7 @@ const navLinks = [
 ];
 
 const Header = () => {
-  const [showMobileNav, setShowMobileNav] = useState(true);
+  const [showMobileNav, setShowMobileNav] = useState(false);
 
   const toggleMobileNav = () => {
     setShowMobileNav(!showMobileNav);
@@ -85,7 +85,12 @@ export default Header;
 const Headers = styled.header`
   width: 100%;
   height: 70px;
-  background-color: var(--primary-cl);
+  position: sticky;
+  top: 0;
+  background-color: white;
+  z-index: 100;
+  box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+  /* background-color: var(--primary-cl); */
 `
 
 const Container = styled.div`
@@ -166,7 +171,7 @@ const MobileToggole = styled.div`
 `
 
 const Button = styled.button`
-  background-color: var(--secondary-cl);
+  background-color: #000d6b;
   padding: 8px 12px;
   border-radius: 6px;
   font-size: 14px;
@@ -174,7 +179,7 @@ const Button = styled.button`
   cursor: pointer;
   border: none;
   outline: none;
-  color: var(--primary-cl);
+  color: white;
 `;
 
 
