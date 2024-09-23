@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Container, Row, Col, Form, FormGroup, Input } from "reactstrap";
 import Helmet from "../components/Helmet/Helmet";
 import CommonSection from "../components/UI/CommonSection";
-
+import AOS from "aos";
+import "aos/dist/aos.css";
 import "../styles/contact.css";
 
 const socialLinks = [
@@ -26,13 +27,21 @@ const socialLinks = [
 ];
 
 const Contact = () => {
+  useEffect(() => {
+    AOS.init({
+      duration: 1000,
+      easing: 'ease-in-out',
+      once: false,
+    });
+  }, []);
+
   return (
     <Helmet title="Contact">
       <CommonSection title="Contact" />
       <section>
         <Container>
           <Row>
-            <Col lg="7" md="7">
+            <Col lg="7" md="7" data-aos="fade-right">
               <h6 className="fw-bold mb-4">Get In Touch</h6>
 
               <Form>
@@ -50,38 +59,38 @@ const Contact = () => {
                   ></textarea>
                 </FormGroup>
 
-                <button className=" contact__btn" type="submit">
+                <button className="contact__btn" type="submit">
                   Send Message
                 </button>
               </Form>
             </Col>
 
-            <Col lg="5" md="5">
+            <Col lg="5" md="5" data-aos="fade-left">
               <div className="contact__info">
                 <h6 className="fw-bold">Contact Information</h6>
                 <p className="section__description mb-0">
                   123 ZindaBazar, Sylhet, Bangladesh
                 </p>
-                <div className=" d-flex align-items-center gap-2">
+                <div className="d-flex align-items-center gap-2">
                   <h6 className="fs-6 mb-0">Phone:</h6>
                   <p className="section__description mb-0">+88683896366</p>
                 </div>
 
-                <div className=" d-flex align-items-center gap-2">
+                <div className="d-flex align-items-center gap-2">
                   <h6 className="mb-0 fs-6">Email:</h6>
                   <p className="section__description mb-0">example@gmail.com</p>
                 </div>
 
                 <h6 className="fw-bold mt-4">Follow Us</h6>
 
-                <div className=" d-flex align-items-center gap-4 mt-3">
+                <div className="d-flex align-items-center gap-4 mt-3">
                   {socialLinks.map((item, index) => (
                     <Link
                       to={item.url}
                       key={index}
                       className="social__link-icon"
                     >
-                      <i class={item.icon}></i>
+                      <i className={item.icon}></i>
                     </Link>
                   ))}
                 </div>
