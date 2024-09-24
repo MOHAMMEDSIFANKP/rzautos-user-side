@@ -1,15 +1,16 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { motion } from "framer-motion";
 
-// imges and logos
-import LogoImage from '../../assets/all-images/logo/logo.svg'
-import mobtoggoleIcon from '../../assets/icons/mobtoggole.svg'
+// Images and logos
+import LogoImage from '../../assets/all-images/logo/logo.svg';
+import mobtoggoleIcon from '../../assets/icons/mobtoggole.svg';
+
 const navLinks = [
   { path: "/", display: "Home" },
   { path: "/about", display: "Car Buy" },
   { path: "/cars", display: "Reviews & History" },
-  { path: "/contact", display: "Contact Us" },
+  { path: "/contact", display: "Contact" },
 ];
 
 const Header = () => {
@@ -19,36 +20,32 @@ const Header = () => {
     setShowMobileNav(!showMobileNav);
   };
 
-
-
   return (
-   <>
-    <Headers>
-      <Container>
-        <Logo className="image">
-          <img src={LogoImage} alt="" />
-        </Logo>
-        <ItemsContainer>
-          {navLinks.map((list) => (
-            <Ul>
-              <Li className="group">
-                {list?.display}
-                <span></span>
-              </Li>
-            </Ul>
-          ))}
-        </ItemsContainer>
-        <ContactBtnContainer>
-          <Button>
-            Requst a call
-          </Button>
-          <MobileToggole onClick={toggleMobileNav}>
-            <img src={mobtoggoleIcon} alt="" />
-        </MobileToggole>
-        </ContactBtnContainer>
-      </Container>
-    </Headers>
-    {showMobileNav && (
+    <>
+      <Headers>
+        <Container>
+          <Logo className="image">
+            <img src={LogoImage} alt="Logo" />
+          </Logo>
+          <ItemsContainer>
+            {navLinks.map((link) => (
+              <Ul key={link.path}>
+                <Li className="group">
+                  <a href={link.path}>{link.display}</a>
+                  <span></span>
+                </Li>
+              </Ul>
+            ))}
+          </ItemsContainer>
+          <ContactBtnContainer>
+            <Button>Request a call</Button>
+            <MobileToggole onClick={toggleMobileNav}>
+              <img src={mobtoggoleIcon} alt="Toggle Menu" />
+            </MobileToggole>
+          </ContactBtnContainer>
+        </Container>
+      </Headers>
+      {showMobileNav && (
         <MobileNavContainer
           as={motion.div}
           initial={{ x: "100%" }}
@@ -57,26 +54,23 @@ const Header = () => {
           transition={{ duration: 0.3 }}
         >
           <CloseIcon onClick={toggleMobileNav}>
-            <img src={mobtoggoleIcon} alt="close-icon" />
+            <img src={mobtoggoleIcon} alt="Close Menu" />
           </CloseIcon>
           <MobileNavItems>
-            {navLinks.map((list, index) => (
+            {navLinks.map((link, index) => (
               <motion.p
                 key={index}
-                onClick={() => {
-                  setShowMobileNav(false);
-                }}
+                onClick={() => setShowMobileNav(false)}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-                {list.display}
+                <a href={link.path}>{link.display}</a>
               </motion.p>
             ))}
           </MobileNavItems>
         </MobileNavContainer>
       )}
-    
-   </>
+    </>
   );
 };
 
@@ -90,42 +84,44 @@ const Headers = styled.header`
   background-color: white;
   z-index: 100;
   box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
-  /* background-color: var(--primary-cl); */
-`
+`;
 
 const Container = styled.div`
   height: 100%;
   width: 80%;
-  margin: 0% auto;
+  margin: 0 auto;
   display: flex;
   justify-content: space-between;
   align-items: center;
 
-  @media (max-width:1440px){
+  @media (max-width: 1440px) {
     width: 90%;
   }
-`
+`;
 
 const Logo = styled.div`
-  img{
+  img {
     width: 50px;
     height: 50px;
   }
-`
+`;
 
 const ItemsContainer = styled.div`
   display: flex;
   flex-direction: row;
   gap: 20px;
-  @media (max-width:1440px){
+
+  @media (max-width: 1440px) {
     gap: 10px;
   }
-  @media (max-width:768px){
+  
+  @media (max-width: 768px) {
     display: none;
   }
-`
+`;
 
-const Ul = styled.ul``
+const Ul = styled.ul``;
+
 const Li = styled.li`
   padding-top: 20px;
   font-size: 16px;
@@ -145,6 +141,11 @@ const Li = styled.li`
     transition: all 0.3s ease-in-out;
   }
 
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+
   &:hover {
     font-family: 'general-sans-medium';
     span {
@@ -158,17 +159,19 @@ const ContactBtnContainer = styled.div`
   justify-content: center;
   align-items: center;
   gap: 20px;
-`
+`;
 
 const MobileToggole = styled.div`
   display: none;
-  @media (max-width:768px){
+
+  @media (max-width: 768px) {
     display: block;
   }
-   img{
+
+  img {
     width: 30px;
-   }
-`
+  }
+`;
 
 const Button = styled.button`
   background-color: #000d6b;
@@ -182,9 +185,7 @@ const Button = styled.button`
   color: white;
 `;
 
-
 // Mobile Navbar Styles
-
 const MobileNavContainer = styled.div`
   position: fixed;
   inset: 0;
@@ -208,8 +209,13 @@ const MobileNavItems = styled(motion.div)`
     font-size: 20px;
     cursor: pointer;
     color: #4c956c;
-    margin-bottom: 0%;
+    margin-bottom: 0;
     transition: color 0.3s ease;
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
 
     &:hover {
       color: #052d23;
