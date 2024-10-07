@@ -1,9 +1,11 @@
 import React from "react";
 import { Col } from "reactstrap";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "../../styles/car-item.css";
+import { nav } from "framer-motion/client";
 
 const CarItem = (props) => {
+  const navigate = useNavigate()
   const { imgUrl, model, carName, automatic, speed, price } = props.item;
 
   return (
@@ -36,7 +38,7 @@ const CarItem = (props) => {
           </button>
 
           <button className=" w-50 car__item-btn car__btn-details">
-            <Link >Details</Link>
+            <Link to={`/cars/${carName}`}>Details</Link>
           </button>
         </div>
       </div>

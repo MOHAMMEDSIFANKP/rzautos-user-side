@@ -3,14 +3,14 @@ import styled from "styled-components";
 import { motion } from "framer-motion";
 
 // Images and logos
-import LogoImage from '../../assets/all-images/logo/logo.svg';
+import LogoImage from '../../assets/all-images/logo/logo.png';
 import mobtoggoleIcon from '../../assets/icons/mobtoggole.svg';
 import { Link, useNavigate } from "react-router-dom";
 
 const navLinks = [
   { path: "/", display: "Home" },
   { path: "/cars", display: "Car Buy" },
-  { path: "/", display: "Reviews & History" },
+  { path: "/about", display: "Reviews & History" },
   { path: "/contact", display: "Contact" },
 ];
 
@@ -103,8 +103,8 @@ const Container = styled.div`
 
 const Logo = styled.div`
   img {
-    width: 50px;
-    height: 50px;
+    width: 80px;
+    height: 80px;
   }
 `;
 
@@ -204,15 +204,14 @@ const MobileNavItems = styled(motion.div)`
   flex-direction: column;
   gap: 8px;
   text-align: center;
-  font-family: 'general-sans-medium';
-  color: #4c956c;
-
+  font-family: 'general-sans-semibold';
+  color: var(--primary-cl);
   p {
     font-size: 20px;
     cursor: pointer;
-    color: #4c956c;
     margin-bottom: 0;
     transition: color 0.3s ease;
+    font-weight: bold;
 
     a {
       text-decoration: none;

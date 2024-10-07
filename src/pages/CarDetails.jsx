@@ -5,7 +5,7 @@ import { Container, Row, Col } from "reactstrap";
 import Helmet from "../components/Helmet/Helmet";
 import { useParams } from "react-router-dom";
 import BookingForm from "../components/UI/BookingForm";
-import PaymentMethod from "../components/UI/PaymentMethod";
+import Carousel from "../components/UI/Carousel";
 
 const CarDetails = () => {
   const { slug } = useParams();
@@ -22,10 +22,11 @@ const CarDetails = () => {
         <Container>
           <Row>
             <Col lg="6">
-              <img src={singleCarItem.imgUrl} alt="" className="w-100" />
+            <Carousel/>
+              {/* <img src={singleCarItem.imgUrl} alt="" className="w-100" /> */}
             </Col>
 
-            <Col lg="6">
+            <Col lg="6" className="d-flex align-items-center ">
               <div className="car__info">
                 <h2 className="section__title">{singleCarItem.carName}</h2>
 
@@ -107,17 +108,10 @@ const CarDetails = () => {
               </div>
             </Col>
 
-            <Col lg="7" className="mt-5">
+            <Col lg="12" className="mt-5">
               <div className="booking-info mt-5">
                 <h5 className="mb-4 fw-bold ">Booking Information</h5>
                 <BookingForm />
-              </div>
-            </Col>
-
-            <Col lg="5" className="mt-5">
-              <div className="payment__info mt-5">
-                <h5 className="mb-4 fw-bold ">Payment Information</h5>
-                <PaymentMethod />
               </div>
             </Col>
           </Row>
