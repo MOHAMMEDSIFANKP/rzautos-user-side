@@ -34,7 +34,7 @@ const Footer = () => {
               is inspected and ready for the road.
             </p>
           </Col>
-          <Col lg="4" md="4" sm="6" className="d-flex justify-content-center">
+          <Col lg="4" md="4" sm="6" className="">
             <div className="mb-4">
               <h5 className="footer__link-title">Quick Links</h5>
               <ListGroup>
