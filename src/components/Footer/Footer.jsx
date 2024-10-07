@@ -5,29 +5,10 @@ import { Link } from "react-router-dom";
 import "../../styles/footer.css";
 
 const quickLinks = [
-  {
-    path: "/about",
-    display: "About",
-  },
-
-  {
-    path: "#",
-    display: "Privacy Policy",
-  },
-
-  {
-    path: "/cars",
-    display: "Car Listing",
-  },
-  {
-    path: "/blogs",
-    display: "Blog",
-  },
-
-  {
-    path: "/contact",
-    display: "Contact",
-  },
+  { path: "/", display: "Home" },
+  { path: "/", display: "Car Buy" },
+  { path: "/", display: "Reviews & History" },
+  { path: "/contact", display: "Contact" },
 ];
 
 const Footer = () => {
@@ -79,7 +60,7 @@ const Footer = () => {
           </Col>
 
           <Col lg="3" md="4" sm="12">
-            <div className="mb-4">
+            {/* <div className="mb-4">
               <h5 className="footer__link-title">Newsletter</h5>
               <p className="section__description">Subscribe our newsletter</p>
               <div className="newsletter">
@@ -88,7 +69,7 @@ const Footer = () => {
                   <i class="ri-send-plane-line"></i>
                 </span>
               </div>
-            </div>
+            </div> */}
           </Col>
 
      

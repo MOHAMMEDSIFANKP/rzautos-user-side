@@ -5,16 +5,18 @@ import { motion } from "framer-motion";
 // Images and logos
 import LogoImage from '../../assets/all-images/logo/logo.svg';
 import mobtoggoleIcon from '../../assets/icons/mobtoggole.svg';
+import { Link, useNavigate } from "react-router-dom";
 
 const navLinks = [
   { path: "/", display: "Home" },
-  { path: "/about", display: "Car Buy" },
-  { path: "/cars", display: "Reviews & History" },
+  { path: "/", display: "Car Buy" },
+  { path: "/", display: "Reviews & History" },
   { path: "/contact", display: "Contact" },
 ];
 
 const Header = () => {
   const [showMobileNav, setShowMobileNav] = useState(false);
+  const navigate = useNavigate()
 
   const toggleMobileNav = () => {
     setShowMobileNav(!showMobileNav);
@@ -31,14 +33,14 @@ const Header = () => {
             {navLinks.map((link) => (
               <Ul key={link.path}>
                 <Li className="group">
-                  <a href={link.path}>{link.display}</a>
+                  <Link to={link.path}>{link.display}</Link>
                   <span></span>
                 </Li>
               </Ul>
             ))}
           </ItemsContainer>
           <ContactBtnContainer>
-            <Button>Request a call</Button>
+            <Button onClick={()=>navigate('/contact')}>Request a call</Button>
             <MobileToggole onClick={toggleMobileNav}>
               <img src={mobtoggoleIcon} alt="Toggle Menu" />
             </MobileToggole>
@@ -64,7 +66,7 @@ const Header = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <a href={link.path}>{link.display}</a>
+                <Link to={link.path}>{link.display}</Link>
               </motion.p>
             ))}
           </MobileNavItems>
