@@ -9,7 +9,7 @@ import { Link, useNavigate } from "react-router-dom";
 
 const navLinks = [
   { path: "/", display: "Home" },
-  { path: "/", display: "Car Buy" },
+  { path: "/cars", display: "Car Buy" },
   { path: "/", display: "Reviews & History" },
   { path: "/contact", display: "Contact" },
 ];
