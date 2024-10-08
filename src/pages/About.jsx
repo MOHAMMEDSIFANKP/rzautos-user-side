@@ -182,7 +182,7 @@ const About = () => {
                   </div>
                 ))}
               </Slider>
-              <Testimonial/>
+              {/* <Testimonial/> */}
             </Col>
           </Row>
           
