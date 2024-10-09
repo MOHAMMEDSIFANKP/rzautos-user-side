@@ -3,17 +3,23 @@ import React, { Fragment } from "react";
 import Header from "../Header/Header";
 import Footer from "../Footer/Footer";
 import Routers from "../../routers/Routers";
+import styled from "styled-components";
 
 const Layout = () => {
   return (
-    <Fragment>
+    <Section>
       <Header />
       <div>
         <Routers />
       </div>
       <Footer />
-    </Fragment>
+    </Section>
   );
 };
 
 export default Layout;
+
+const Section = styled.div`
+  width: 100%;
+  overflow-x: hidden;
+`
