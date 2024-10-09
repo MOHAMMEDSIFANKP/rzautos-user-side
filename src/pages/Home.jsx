@@ -89,7 +89,7 @@ const Home = () => {
       </section>
 
       {/* =============== Faq section =========== */}
-      <section data-aos="fade-up">
+      {/* <section data-aos="fade-up">
         <Container>
           <Row>
             <Col lg="12" className="mb-5 text-center">
@@ -99,7 +99,7 @@ const Home = () => {
             <Faq />
           </Row>
         </Container>
-      </section>
+      </section> */}
     </Helmet>
   );
 };

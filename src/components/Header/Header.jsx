@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 // Images and logos
 import LogoImage from '../../assets/all-images/logo/logo.png';
 import mobtoggoleIcon from '../../assets/icons/mobtoggole.svg';
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 const navLinks = [
   { path: "/", display: "Home" },
@@ -15,6 +15,7 @@ const navLinks = [
 ];
 
 const Header = () => {
+  const loction = useLocation()
   const [showMobileNav, setShowMobileNav] = useState(false);
   const navigate = useNavigate()
 
@@ -32,7 +33,7 @@ const Header = () => {
           <ItemsContainer>
             {navLinks.map((link) => (
               <Ul key={link.path}>
-                <Li className="group">
+                <Li className={`group ${loction.pathname === link?.path ? 'active':''}`}>
                   <Link to={link.path}>{link.display}</Link>
                   <span></span>
                 </Li>
@@ -129,7 +130,7 @@ const Li = styled.li`
   font-size: 16px;
   cursor: pointer;
   font-family: 'general-sans-regular';
-  padding-bottom: 6px;
+  padding-bottom: 5px;
   transition: all 0.3s ease-in-out;
   position: relative;
 
@@ -148,8 +149,9 @@ const Li = styled.li`
     color: inherit;
   }
 
-  &:hover {
+  &:hover, &.active {
     font-family: 'general-sans-medium';
+    color: black;
     span {
       width: 100%;
     }
