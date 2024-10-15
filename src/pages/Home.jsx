@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import AOS from "aos";
 import "aos/dist/aos.css";
 
@@ -14,19 +14,56 @@ import BecomeDriverSection from "../components/UI/BecomeDriverSection";
 import Testimonial from "../components/UI/Testimonial";
 import BlogList from "../components/UI/BlogList";
 import Faq from "../components/UI/Faq";
+import { getCarsApi, getSeoApi } from "../services/services";
 
 const Home = () => {
+  const [getCarData, setCarData] = useState([])
+  const [seoData,setSeoData] = useState({})
+
+  const fetchData = async () => {
+    try {
+      const res = await getCarsApi()
+      const { data, StatusCode } = res.data
+      if (StatusCode === 6000) {
+        setCarData(data)
+      }
+      else {
+        setCarData([])
+      }
+    } catch (error) {
+      console.log(error);
+      setCarData([])
+    }
+  }
+   // Seo Data
+   const fetchSeoData = async () => {
+    try {
+      const res = await getSeoApi('/')
+      const { data, StatusCode } = res.data
+      if (StatusCode === 6000) {
+        setSeoData(data[0])
+      }
+      else {
+        setSeoData({})
+      }
+    } catch (error) {
+      console.log(error);
+      setSeoData({})
+    }
+  }
+
   useEffect(() => {
-    // Initialize AOS for scroll animations
     AOS.init({
-      duration: 1000, // Animation duration in milliseconds
-      easing: "ease-in-out", // Easing function for smoothness
-      once: true, // Animation happens only once
+      duration: 1000,
+      easing: "ease-in-out",
+      once: true,
     });
+    fetchData()
+    fetchSeoData()
   }, []);
 
   return (
-    <Helmet title="Home">
+    <Helmet title={seoData?.meta_title || "RZAUTOS | Home"}>
       {/* ============= hero section =========== */}
       <section className="p-0 hero__slider-section" data-aos="fade-up">
         <HeroSlider />
@@ -45,7 +82,6 @@ const Home = () => {
               <h6 className="section__subtitle">See our</h6>
               <h2 className="section__title">Popular Services</h2>
             </Col>
-
             <ServicesList />
           </Row>
         </Container>
@@ -59,14 +95,13 @@ const Home = () => {
               <h6 className="section__subtitle">Come with</h6>
               <h2 className="section__title">Hot Offers</h2>
             </Col>
-
-            {carData.slice(0, 6).map((item) => (
+            {getCarData.map((item) => (
               <CarItem item={item} key={item.id} />
             ))}
           </Row>
         </Container>
       </section>
-      
+
 
 
       {/* =========== become a driver section ============ */}
@@ -82,24 +117,22 @@ const Home = () => {
               <h6 className="section__subtitle">Our clients says</h6>
               <h2 className="section__title">Testimonials</h2>
             </Col>
-
             <Testimonial />
           </Row>
         </Container>
       </section>
 
       {/* =============== Faq section =========== */}
-      {/* <section data-aos="fade-up">
+      <section data-aos="fade-up">
         <Container>
           <Row>
             <Col lg="12" className="mb-5 text-center">
               <h2 className="section__title">Faq</h2>
             </Col>
-
             <Faq />
           </Row>
         </Container>
-      </section> */}
+      </section>
     </Helmet>
   );
 };
