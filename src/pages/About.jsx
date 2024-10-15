@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Container, Row, Col } from "reactstrap";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
@@ -12,54 +12,51 @@ import CommonSection from "../components/UI/CommonSection";
 import AboutSection from "../components/UI/AboutSection";
 
 // Images
-import avaImg from "../assets/all-images/ava-1.jpg";
 import driveImage from '../assets/all-images/drive.jpg'
 
 import "../styles/about.css";
-import Testimonial from "../components/UI/Testimonial";
+import { getSeoApi, getTestimonialsApi } from "../services/services";
 
 const About = () => {
+  const [testimonials,setTestimonials] = useState([])
+  const [seoData, setSeoData] = useState({});
+
+  const fetchData = async () => {
+    try {
+      const res = await getTestimonialsApi()
+      const { data, StatusCode } = res.data
+      if (StatusCode === 6000) {
+        setTestimonials(data)
+      }
+      else {
+        setTestimonials([])
+      }
+
+    } catch (error) {
+      setTestimonials([])
+    }
+  }
+
+  const fetchSeoData = async () => {
+    try {
+      const res = await getSeoApi('/about');
+      const { data, StatusCode } = res.data;
+      if (StatusCode === 6000) {
+        setSeoData(data[0]);        
+      } else {
+        setSeoData({});
+      }
+    } catch (error) {
+      setSeoData({});
+    }
+  };
+  
   useEffect(() => {
     AOS.init({ duration: 1000, easing: "ease-in-out", once: true });
+    fetchData()
+    fetchSeoData()
   }, []);
 
-  const testimonials = [
-    {
-      name: "John Doe",
-      review: "This car exceeded my expectations! It's not only reliable for daily commutes but also surprisingly fuel-efficient. The smooth ride and advanced features make every journey a pleasure.",
-      rating: 5,
-      img: avaImg,
-      carBought: "Sedan XL 2023"
-    },
-    {
-      name: "Jane Smith",
-      review: "I can't praise this car enough for long trips. The comfortable seats and spacious interior make family vacations a joy. The advanced safety features give me peace of mind on the road.",
-      rating: 4,
-      img: avaImg,
-      carBought: "SUV Pro 2022"
-    },
-    {
-      name: "Alex Johnson",
-      review: "Overall, it's a solid car with great performance. The minor issue with the AC was promptly resolved by the dealership. The responsive handling and sleek design make it a joy to drive.",
-      rating: 3,
-      img: avaImg,
-      carBought: "Hatchback Eco 2023"
-    },
-    {
-      name: "Lisa Brown",
-      review: "This car has been a game-changer for our family outings. The ample cargo space and entertainment system keep everyone happy on long drives. It's both practical and luxurious.",
-      rating: 5,
-      img: avaImg,
-      carBought: "Minivan Deluxe 2022"
-    },
-    {
-      name: "Michael Lee",
-      review: "The sporty feel and responsive acceleration make city driving exciting. While the fuel efficiency in the city could be better, it's perfect for weekend getaways. The modern tech features are a big plus.",
-      rating: 4,
-      img: avaImg,
-      carBought: "Coupe Sport 2023"
-    },
-  ];
 
   const settings = {
     dots: true,
@@ -87,8 +84,8 @@ const About = () => {
     ]
   };
   return (
-    <Helmet title="About">
-      <CommonSection title="WHO WE ARE" />
+    <Helmet title={seoData?.meta_title || "Reviews & History"}>
+      <CommonSection title="Who We Are" />
       <AboutSection aboutClass="aboutPage" />
       <Section bg='#000d6b' color='white' >
         <Container>
@@ -96,12 +93,12 @@ const About = () => {
             <Col lg="6" data-aos="fade-right">
               <div className="history-content pr-lg-5">
                 <Title className="mb-4 section__title">Our Exciting Journey</Title>
-                <p className="mb-4 ">
+                <p className="mb-4 journy">
                   Founded in 2024, RZ Autos embarked on a mission to redefine how people
                   buy and exchange cars. Our vision is simple yet ambitious: to provide a
                   seamless, transparent, and customer-focused car buying and exchange experience.
                 </p>
-                <p className="mb-4">
+                <p className="mb-4 journy">
                   Although we're a young company, our passion for innovation sets us apart.
                   At RZ Autos, we’ve integrated the latest technology to simplify the car
                   buying and exchange process, offering everything from detailed listings
@@ -109,7 +106,7 @@ const About = () => {
                   you’re looking to buy your dream car or trade in your current one, we’ve
                   got you covered.
                 </p>
-                <p>
+                <p className="journy">
                   As we grow, our commitment to building trust, ensuring quality, and delivering
                   exceptional service remains at the core of what we do. With every vehicle sold
                   or exchanged, we aim to make the car buying experience smarter, easier, and
@@ -157,8 +154,8 @@ const About = () => {
                     >
                       <div className="text-center d-flex gap-5 align-items-center  mb-3">
                         <img
-                          src={testimonial.img}
-                          alt={`${testimonial.name}`}
+                          src={testimonial?.profile_picture}
+                          alt={`${testimonial?.name}`}
                           className="rounded-circle mb-3"
                           style={{
                             width: '80px',
@@ -168,14 +165,14 @@ const About = () => {
                           }}
                         />
                         <div>
-                        <h5 className="mb-1">{testimonial.name}</h5>
-                        <p className="text-muted small">{testimonial.carBought}</p>
+                        <h5 className="mb-1">{testimonial?.name}</h5>
+                        <p className="text-muted small">{testimonial?.location}</p>
                         </div>
                       </div>
-                      <p className="flex-grow-1 section__description" style={{ fontSize: '0.9rem', lineHeight: '1.6' }}>"{testimonial.review}"</p>
+                      {testimonial?.review_text && <p className="flex-grow-1 section__description" style={{ fontSize: '0.9rem', lineHeight: '1.6' }}>"{testimonial?.review_text}"</p>}
                       <div className="text-center mt-3">
                         <p className="text-warning mb-0">
-                          {"★".repeat(testimonial.rating)}{"☆".repeat(5 - testimonial.rating)}
+                          {"★".repeat(5)}{"☆".repeat(5 - 5)}
                         </p>
                       </div>
                     </div>
@@ -216,6 +213,9 @@ export default About;
 const Section = styled.section`
   background-color: ${(props) => props.bg || 'inherit'};
   color: ${(props) => props.color || 'inherit'};
+  .journy{
+    color: #ffffffb6;
+  }
 `;
 
 const Title = styled.h3`

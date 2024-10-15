@@ -10,7 +10,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 const navLinks = [
   { path: "/", display: "Home" },
   { path: "/cars", display: "Car Buy" },
-  { path: "/about", display: "Reviews & History" },
+  { path: "/reviews-&-history", display: "Reviews & History" },
   { path: "/contact", display: "Contact" },
 ];
 
@@ -31,10 +31,10 @@ const Header = () => {
             <img src={LogoImage} alt="Logo" />
           </Logo>
           <ItemsContainer>
-            {navLinks.map((link) => (
-              <Ul key={link.path}>
-                <Li className={`group ${loction.pathname === link?.path ? 'active':''}`}>
-                  <Link to={link.path}>{link.display}</Link>
+            {navLinks.map((link,index) => (
+              <Ul key={index}>
+                <Li onClick={()=>navigate(`${link?.path}`)} className={`group ${loction.pathname === link?.path ? 'active':''}`}>
+                  {link.display}
                   <span></span>
                 </Li>
               </Ul>

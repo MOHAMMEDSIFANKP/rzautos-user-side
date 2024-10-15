@@ -1,35 +1,30 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { getFaqsApi } from '../../services/services';
 
 function Faq() {
     const [isOpen, setOpen] = useState(null);
+    const [faqList, setFaqList] = useState([])
 
-    const faqList = [
-        {
-            question: "How do I buy a car online?",
-            answer: "You can browse through our collection of vehicles, select your preferred car, and proceed to the checkout. Our team will guide you through the payment and delivery process, ensuring a smooth and secure transaction."
-        },
-        {
-            question: "Can I test drive a car before buying it?",
-            answer: "Yes, you can arrange a test drive at one of our partner dealerships. Simply contact us to schedule an appointment for the car you are interested in."
-        },
-        {
-            question: "What payment methods do you accept?",
-            answer: "We accept major credit/debit cards, bank transfers, and financing options through our approved lenders."
-        },
-        {
-            question: "Do you offer financing options?",
-            answer: "Yes, we offer a range of financing options to suit your needs. You can apply for finance during the checkout process, and our team will assist you in securing the best deal."
-        },
-        {
-            question: "Can I trade in my old car?",
-            answer: "Yes, you can trade in your old car when purchasing a new vehicle from us. Simply provide us with the details of your car, and we’ll give you an instant valuation."
-        },
-        {
-            question: "Do you deliver cars across the UK?",
-            answer: "Yes, we offer nationwide delivery to any location in the UK. Delivery costs may vary based on your location."
+    const fetchData = async () => {
+        try {
+            const res = await getFaqsApi()
+            const { data, StatusCode } = res.data
+            if (StatusCode === 6000) {
+                setFaqList(data)
+            }
+            else {
+                setFaqList([])
+            }
+        } catch (error) {
+            console.log(error);
+            setFaqList([])
         }
-    ];
+    }
+
+    useEffect(() => {
+        fetchData()
+    }, [])
 
     return (
         <Section>

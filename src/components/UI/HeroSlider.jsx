@@ -1,10 +1,35 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Slider from "react-slick";
 import { Container } from "reactstrap";
 import { Link } from "react-router-dom";
 import "../../styles/hero-slider.css";
 
+import sliderImage from '../../assets/all-images/slider-img/slider-1.jpg'
+import styled from "styled-components";
+import { getHomePageCarouselApi } from "../../services/services";
+
 const HeroSlider = () => {
+  const [carouselData, setCarouselData] = useState([])
+
+  const fetData = async () => {
+    try {
+      const res = await getHomePageCarouselApi()
+      const { data, StatusCode } = res.data
+      if (StatusCode === 6000) {
+        setCarouselData(data)
+      }
+      else {
+        setCarouselData([])
+      }
+    } catch (error) {
+      setCarouselData([])
+    }
+  }
+
+  useEffect(() => {
+    fetData()
+  }, [])
+
   const settings = {
     fade: true,
     speed: 2000,
@@ -19,47 +44,32 @@ const HeroSlider = () => {
   return (
     <Slider {...settings} className="hero__slider">
       {/* Slide 1 - Find Your Perfect Car */}
-      <div className="slider__item slider__item-01 mt0">
-        <Container>
-          <div className="slider__content ">
-            <h4 className="text-light mb-3">Find Your Perfect Car Today!</h4>
-            <h1 className="text-light mb-4">
-              Discover unbeatable deals on new and used cars. Fast, easy, and reliable.
-            </h1>
-            <button className="btn reserve__btn mt-4">
-              <Link to="/cars">Shop Now</Link>
-            </button>
-          </div>
-        </Container>
-      </div>
-
-      {/* Slide 2 - Exclusive Deals */}
-      <div className="slider__item slider__item-02 mt0">
-        <Container>
-          <div className="slider__content ">
-            <h4 className="text-light mb-3">Exclusive Discounts on New Arrivals</h4>
-            <h1 className="text-light mb-4">Shop Our Latest Models and Save Big!</h1>
-            <button className="btn reserve__btn mt-4">
-              <Link to="/cars">Explore Now</Link>
-            </button>
-          </div>
-        </Container>
-      </div>
-
-      {/* Slide 3 - Certified Pre-Owned */}
-      <div className="slider__item slider__item-03 mt0">
-        <Container>
-          <div className="slider__content ">
-            <h4 className="text-light mb-3">Certified Pre-Owned Cars Available</h4>
-            <h1 className="text-light mb-4">High-Quality, Inspected, and Affordable Pre-Owned Vehicles</h1>
-            <button className="btn reserve__btn mt-4">
-              <Link to="/cars">Browse Certified Cars</Link>
-            </button>
-          </div>
-        </Container>
-      </div>
+      {carouselData.map((item, index) => (
+        <Carousel key={index} className="slider__item  mt0" bg={item?.image}>
+          <Container>
+            <div className="slider__content ">
+              <h4 className="text-light mb-3">{item?.title_1}</h4>
+              <h1 className="text-light mb-4">
+                {item?.title_2}
+              </h1>
+              <button className="btn reserve__btn mt-4">
+                <Link to="/cars">Explore Now</Link>
+              </button>
+            </div>
+          </Container>
+        </Carousel>
+      ))}
     </Slider>
   );
 };
 
 export default HeroSlider;
+
+const Carousel = styled.div`
+  background-image: url(${props => props.bg});
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background: linear-gradient(rgb(0, 13, 107, 0.5), rgb(0, 13, 107, 0.5)),
+
+`

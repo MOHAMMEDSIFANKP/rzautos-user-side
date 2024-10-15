@@ -1,103 +1,111 @@
 import React, { useState } from 'react'
 import styled from "styled-components";
 import { AnimatePresence, motion, wrap } from "framer-motion";
-import { IMAGES } from '../../assets/data/carData';
 
-function Carousel() {
-    const [[imageCount, direction], setImageCount] = useState([0, 0])
+function Carousel({ images }) {
+  const [[imageCount, direction], setImageCount] = useState([0, 0])
 
-    const activeImageIndex = wrap(0, IMAGES.length, imageCount)
+  const activeImageIndex = wrap(0, images?.length, imageCount)
 
-    const swipeToImage = swipeDirection => {
-        setImageCount([imageCount + swipeDirection, swipeDirection])
+  const swipeToImage = swipeDirection => {
+    setImageCount([imageCount + swipeDirection, swipeDirection])
+  }
+
+  const dragEndHandler = dragInfo => {
+    const draggedDistance = dragInfo.offset.x
+    const swipeThreshold = 50
+    if (draggedDistance > swipeThreshold) {
+      swipeToImage(-1)
+    } else if (draggedDistance < -swipeThreshold) {
+      swipeToImage(1)
     }
+  }
 
-    const dragEndHandler = dragInfo => {
-        const draggedDistance = dragInfo.offset.x
-        const swipeThreshold = 50
-        if (draggedDistance > swipeThreshold) {
-            swipeToImage(-1)
-        } else if (draggedDistance < -swipeThreshold) {
-            swipeToImage(1)
-        }
+  const skipToImage = imageId => {
+    let changeDirection
+    if (imageId > activeImageIndex) {
+      changeDirection = 1
+    } else if (imageId < activeImageIndex) {
+      changeDirection = -1
     }
+    setImageCount([imageId, changeDirection])
+  }
 
-    const skipToImage = imageId => {
-        let changeDirection
-        if (imageId > activeImageIndex) {
-            changeDirection = 1
-        } else if (imageId < activeImageIndex) {
-            changeDirection = -1
-        }
-        setImageCount([imageId, changeDirection])
-    }
+  const sliderVariants = {
+    incoming: direction => ({
+      x: direction > 0 ? "100%" : "-100%",
+      scale: 1.2,
+      opacity: 0
+    }),
+    active: { x: 0, scale: 1, opacity: 1 },
+    exit: direction => ({
+      x: direction > 0 ? "-100%" : "100%",
+      scale: 1,
+      opacity: 0.2
+    })
+  }
 
-    const sliderVariants = {
-        incoming: direction => ({
-            x: direction > 0 ? "100%" : "-100%",
-            scale: 1.2,
-            opacity: 0
-        }),
-        active: { x: 0, scale: 1, opacity: 1 },
-        exit: direction => ({
-            x: direction > 0 ? "-100%" : "100%",
-            scale: 1,
-            opacity: 0.2
-        })
-    }
+  const sliderTransition = {
+    duration: 1,
+    ease: [0.56, 0.03, 0.12, 1.04]
+  }
+  return (
+    <Main>
+      <div className="slider-container">
+        <div className="slider">
+          <AnimatePresence initial={false} custom={direction}>
+            <motion.div
+              key={imageCount}
+              style={{
+                backgroundImage: `url(${images[activeImageIndex].image})`
+              }}
+              custom={direction}
+              variants={sliderVariants}
+              initial="incoming"
+              animate="active"
+              exit="exit"
+              transition={sliderTransition}
+              drag="x"
+              dragConstraints={{ left: 0, right: 0 }}
+              dragElastic={1}
+              onDragEnd={(_, dragInfo) => dragEndHandler(dragInfo)}
+              className="image"
+            />
+          </AnimatePresence>
+        </div>
+      </div>
 
-    const sliderTransition = {
-        duration: 1,
-        ease: [0.56, 0.03, 0.12, 1.04]
-    }
-    return (
-        <Main>
-            <div className="slider-container">
-                <div className="slider">
-                    <AnimatePresence initial={false} custom={direction}>
-                        <motion.div
-                            key={imageCount}
-                            style={{
-                                backgroundImage: `url(${IMAGES[activeImageIndex].imageSrc})`
-                            }}
-                            custom={direction}
-                            variants={sliderVariants}
-                            initial="incoming"
-                            animate="active"
-                            exit="exit"
-                            transition={sliderTransition}
-                            drag="x"
-                            dragConstraints={{ left: 0, right: 0 }}
-                            dragElastic={1}
-                            onDragEnd={(_, dragInfo) => dragEndHandler(dragInfo)}
-                            className="image"
-                        />
-                    </AnimatePresence>
-                </div>
+      <div className="thumbnails">
+        {images.map((image, index) => (
+          <div
+            key={image.id}
+            onClick={() => skipToImage(index)}
+            className="thumbnail-container"
+          >
+            <img src={image.image} alt="Musician" />
+            <div
+              className={`active-indicator ${index === activeImageIndex ? "active" : null
+                }`}
+            />
+          </div>
+        ))}
+         {images.map((image, index) => (
+          <div
+            key={image.id}
+            onClick={() => skipToImage(index)}
+            className="thumbnail-container"
+          >
+            <img src={image.image} alt="Musician" />
+            <div
+              className={`active-indicator ${index === activeImageIndex ? "active" : null
+                }`}
+            />
+          </div>
+        ))}
 
-                {/* <div className="buttons">
-                    <button onClick={() => swipeToImage(-1)}>PREV</button>
-                    <button onClick={() => swipeToImage(1)}>NEXT</button>
-                </div> */}
-            </div>
-
-            <div className="thumbnails">
-                {IMAGES.map(image => (
-                    <div
-                        key={image.id}
-                        onClick={() => skipToImage(image.id)}
-                        className="thumbnail-container"
-                    >
-                        <img src={image.imageSrc} alt="Musician" />
-                        <div
-                            className={`active-indicator ${image.id === activeImageIndex ? "active" : null
-                                }`}
-                        />
-                    </div>
-                ))}
-            </div>
-        </Main>
-    )
+      </div>
+    </Main>
+  )
 }
 
 export default Carousel
@@ -138,11 +146,10 @@ const Main = styled.main`
       position: absolute;
       height: 100%;
       width: 100%;
-      background-size: cover;
+      background-size: contain;
       background-repeat: no-repeat;
       background-position: center;
       will-change: transform, opacity;
-  
       &:hover {
         cursor: grab;
       }
@@ -185,55 +192,47 @@ const Main = styled.main`
 
 .thumbnails {
   display: flex;
-  justify-content: center;
-  
+  justify-content: start; 
+  overflow-x: auto; 
+  overflow-y: hidden; 
+  width: 500px;
+  padding: 5px 0;
+  scrollbar-width: thin;
+  scrollbar-color: var(--primary-cl) #e0e0e0; 
+
+  &::-webkit-scrollbar {
+    height: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #e0e0e0;
+    border-radius: 10px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: #f9a826;
+    border-radius: 10px;
+  }
+
+  @media only screen and (max-width: 555px) {
+      width: 96%;
+    }
   .thumbnail-container {
     position: relative;
     height: 120px;
-    width: 90px;    
-
-    @media only screen and (max-width: 555px) {
-      height: 70px;
-      width: 65px;
-    }
-
-    @media only screen and (max-width: 375px) {
-      height: 70px;
-      width: 50px;
-    }
+    flex: 0 0 auto; 
+    margin-right: 5px; 
 
     &:hover {
       cursor: pointer;
     }
 
-    &:not(:last-of-type) {
-      margin-right: 5px;
-    }
-
     img {
       height: 100%;
-      width: 100%;
+      width: 100px;
       object-fit: cover;
       object-position: center;
       border-radius: 10px;
-    }
-
-    .active-indicator {
-      position: absolute;
-      top: 0;
-      left: 0;
-      height: 100%;
-      width: 100%;
-      pointer-events: none;
-      transform: scaleX(0);
-      transform-origin: left;
-      background-color: #0000007f;
-      border-radius  : 10px;
-      transition: 1s cubic-bezier(0.56, 0.03, 0.12, 1.04) transform;
-
-      &.active {
-        transform: scaleX(1);
-      }
     }
   }
 }
