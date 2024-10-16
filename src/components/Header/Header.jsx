@@ -10,6 +10,8 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 const navLinks = [
   { path: "/", display: "Home" },
   { path: "/cars", display: "Car Buy" },
+  { path: "/resale", display: "Car Resale" },
+
   { path: "/reviews-&-history", display: "Reviews & History" },
   { path: "/contact", display: "Contact" },
 ];
