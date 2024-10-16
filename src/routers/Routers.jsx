@@ -8,6 +8,7 @@ import Blog from "../pages/Blog";
 import BlogDetails from "../pages/BlogDetails";
 import NotFound from "../pages/NotFound";
 import Contact from "../pages/Contact";
+import Resale from "../pages/Resale";
 
 const Routers = () => {
   return (
@@ -16,6 +17,7 @@ const Routers = () => {
       <Route path="/reviews-&-history" element={<About />} />
       <Route path="/cars" element={<CarListing />} />
       <Route path="/cars/:id" element={<CarDetails />} />
+      <Route path='/resale' element={<Resale/>} />
       {/* <Route path="/blogs" element={<Blog />} />
       <Route path="/blogs/:slug" element={<BlogDetails />} /> */}
       <Route path="/contact" element={<Contact />} />
