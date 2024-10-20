@@ -8,17 +8,14 @@ import BookingForm from "../components/UI/BookingForm";
 import Carousel from "../components/UI/Carousel";
 import { getCarDetailsApi } from "../services/services";
 import styled from "styled-components";
+import AOS from 'aos';
+import 'aos/dist/aos.css';
 
 const CarDetails = () => {
   const navigate = useNavigate()
   const { id } = useParams();
   const [carInfo, setCarInfo] = useState({})
   const [carImages, setCarImages] = useState([])
-  const singleCarItem = carData[0];
-
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [singleCarItem]);
 
   // Fetch Car Infor Data
   const fetchData = async () => {
@@ -44,16 +41,21 @@ const CarDetails = () => {
     } else {
       navigate('/cars')
     }
+    window.scrollTo(0, 0);
+    AOS.init({
+      duration: 1000,
+      once: true
+    });
   }, [])
   return (
     <Helmet title="RZAUTOS | Car Details">
       <section>
         <Container>
           <Row>
-            <Col lg="6">
+            <Col lg="6" data-aos="fade-left">
               {carImages.length > 0 && <Carousel images={carImages} />}
             </Col>
-            <Col lg="6" className="d-flex align-items-center ">
+            <Col lg="6" className="d-flex align-items-center" data-aos="fade-right">
               <div className="car__info">
                 <h2 className="section__title">{carInfo?.company?.company_name} {carInfo?.model}</h2>
 
@@ -91,10 +93,7 @@ const CarDetails = () => {
                     <i className="ri-car-line" style={{ color: "#f9a826" }}></i>
                     <strong>Body Type:</strong> {carInfo?.body_type || "N/A"}
                   </span>
-                  <span className="d-flex align-items-center gap-1 section__description" title="BHP">
-                    <i className="ri-flashlight-line" style={{ color: "#f9a826" }}></i>
-                    <strong>BHP:</strong> {carInfo?.bhp ? `${carInfo.bhp} BHP` : "N/A"}
-                  </span>
+                  
                   <span className="d-flex align-items-center gap-1 section__description" title="CO2 Emissions">
                     <i className="ri-leaf-line" style={{ color: "#f9a826" }}></i>
                     <strong>CO2 Emissions:</strong> {carInfo?.co2_emissions ? `${carInfo.co2_emissions} g/km` : "N/A"}
@@ -121,7 +120,7 @@ const CarDetails = () => {
 
             <Col lg="12" className="mt-3">
               <div className="booking-info mt-5">
-                <h5 className="mb-4 fw-bold ">Booking Information</h5>
+                <h5 className="mb-4 fw-bold " data-aos="zoom-in">Booking Information</h5>
                 {carInfo.id &&<BookingForm car_id={carInfo.id} />}
               </div>
             </Col>

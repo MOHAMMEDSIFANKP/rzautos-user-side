@@ -6,6 +6,9 @@ import CarItem from "../components/UI/CarItem";
 import styled from "styled-components";
 import Select from 'react-select';
 import { FuelTypesApi, getCarsApi, getSeoApi, TransmissionApi } from "../services/services";
+import AOS from 'aos';
+import 'aos/dist/aos.css';
+import Skelten from "../components/UI/Skelten";
 
 const CarListing = () => {
   const [filters, setFilters] = useState({
@@ -14,7 +17,7 @@ const CarListing = () => {
     fuelType: null,
     search: ''
   });
-  const [carData, setCarData] = useState([]);
+  const [carData, setCarData] = useState(null);
   const [seoData, setSeoData] = useState({});
   const [transmissionOptions, setTransmissionOptions] = useState([]);
   const [fuelTypeOptions, setFuelTypeOptions] = useState([]);
@@ -80,6 +83,11 @@ const CarListing = () => {
   useEffect(() => {
     fetchSeoData();
     fetchFilterData();
+    window.scrollTo(0, 0);
+    AOS.init({
+      duration: 1000,
+      once: true
+    });
   }, []);
 
   useEffect(() => {
@@ -131,7 +139,16 @@ const CarListing = () => {
     singleValue: (provided) => ({
       ...provided,
       color: '#000d6b'
-    })
+    }),
+    menu: (provided) => ({
+      ...provided,
+      zIndex: 1000,
+    }),
+    menuPortal: (base) => ({
+      ...base,
+      zIndex: 1000,
+    }),
+
   };
 
   return (
@@ -140,7 +157,7 @@ const CarListing = () => {
       <Section>
         <Container>
           <Row>
-            <Col lg="12" className="filter-and-search pb-4 d-flex align-items-center justify-content-between gap-3">
+            <Col lg="12" className="filter-and-search pb-4 d-flex align-items-center justify-content-between z-1 gap-3" data-aos="fade-left">
               <FilterBox>
                 <Select
                   value={filters.price}
@@ -184,9 +201,13 @@ const CarListing = () => {
               </FilterBox>
             </Col>
 
-            {carData.map((item) => (
-              <CarItem item={item} key={item.id} />
-            ))}
+            {carData === null ? (
+              <Skelten />
+            ) : (
+              carData.map((item) => (
+                <CarItem item={item} key={item.id} />
+              ))
+            )}
           </Row>
         </Container>
       </Section>

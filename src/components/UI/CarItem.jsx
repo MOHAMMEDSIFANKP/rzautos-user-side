@@ -1,16 +1,24 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Col } from "reactstrap";
 import { Link, useNavigate } from "react-router-dom";
 import "../../styles/car-item.css";
-import { nav } from "framer-motion/client";
 import styled from "styled-components";
+import AOS from 'aos';
+import 'aos/dist/aos.css';
 
 const CarItem = (props) => {
   const navigate = useNavigate()
-  const { id ,thumbnail, company, model, transmission, fuel_type,  carName, selling_price } = props.item;
+  const { id, thumbnail, company, model, transmission, fuel_type, carName, selling_price } = props.item;
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    AOS.init({
+      duration: 1000,
+      once: true
+    });
+  }, [])
   return (
-    <Col lg="4" md="4" sm="6" className="mb-5">
+    <Col lg="4" md="4" sm="6" className="mb-5" data-aos="fade-top">
       <div className="car__item">
         <ImageConainer className="car__img" image={thumbnail}>
           {/* <img src={thumbnail} alt="" className="w-100" /> */}
@@ -38,7 +46,7 @@ const CarItem = (props) => {
             <Link>Enquiry</Link>
           </button> */}
 
-          <button className=" w-100 car__item-btn car__btn-details" onClick={()=>navigate(`/cars/${id}/`)}>
+          <button className=" w-100 car__item-btn car__btn-details" onClick={() => navigate(`/cars/${id}/`)}>
             <Link>Details</Link>
           </button>
         </div>

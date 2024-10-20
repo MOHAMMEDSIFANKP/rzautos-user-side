@@ -7,44 +7,41 @@ import AOS from "aos";
 import "aos/dist/aos.css";
 import "../styles/contact.css";
 import { EnquiryCarsFormSchema } from "../validation/Validation";
-import { getSeoApi, postEnquiryApi } from "../services/services";
+import { getHeadOfficeApi, getSeoApi, postEnquiryApi } from "../services/services";
 import Swal from "sweetalert2";
 import { useFormik } from "formik";
 import styled from "styled-components";
 
-const socialLinks = [
-  {
-    url: "#",
-    icon: "ri-facebook-line",
-  },
-  {
-    url: "#",
-    icon: "ri-instagram-line",
-  },
-  {
-    url: "#",
-    icon: "ri-linkedin-line",
-  },
-  {
-    url: "#",
-    icon: "ri-twitter-line",
-  },
-];
 
 const Contact = () => {
   const [seoData, setSeoData] = useState({});
+  const [headOffice, setHeadOffice] = useState({})
 
   const fetchSeoData = async () => {
     try {
       const res = await getSeoApi('/contact');
       const { data, StatusCode } = res.data;
       if (StatusCode === 6000) {
-        setSeoData(data[0]);        
+        setSeoData(data[0]);
       } else {
         setSeoData({});
       }
     } catch (error) {
       setSeoData({});
+    }
+  };
+
+  const fetchData = async () => {
+    try {
+      const res = await getHeadOfficeApi();
+      const { data, StatusCode } = res.data;
+      if (StatusCode === 6000) {
+        setHeadOffice(data[0]);
+      } else {
+        setHeadOffice({});
+      }
+    } catch (error) {
+      setHeadOffice({});
     }
   };
 
@@ -55,6 +52,7 @@ const Contact = () => {
       once: false,
     });
     fetchSeoData()
+    fetchData()
   }, []);
 
   const [isLoad, setLoad] = useState(false)
@@ -141,45 +139,64 @@ const Contact = () => {
 
               <Form onSubmit={handleSubmit}>
                 <FormGroup className="contact__form">
-                  <Input placeholder="Your Name" type="text"
-                    name="name"
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    value={values.name} />
-                  {touched.name && errors.name && (
-                    <Error>{errors.name}</Error>
-                  )}
+                  <div className="form-group ">
+                    <label>Name</label>
+                    <input
+                      type="text"
+                      className={`form-control ${touched.name && errors.name ? 'is-invalid' : ''}`}
+                      name="name"
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      value={values.name}
+                    />
+                    {touched.name && errors.name &&
+                      <div className="invalid-feedback">{errors.name}</div>}
+                  </div>
                 </FormGroup>
                 <FormGroup className="contact__form">
-                  <Input placeholder="Phone Number" type="number"
-                    name="number"
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    value={values.number} />
-                  {touched.number && errors.number && (
-                    <Error>{errors.number}</Error>
-                  )}
+                  <div className="form-group ">
+                    <label>Number</label>
+                    <input
+                      type="text"
+                      className={`form-control ${touched.number && errors.number ? 'is-invalid' : ''}`}
+                      name="number"
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      value={values.number}
+                    />
+                    {touched.number && errors.number &&
+                      <div className="invalid-feedback">{errors.number}</div>}
+                  </div>
                 </FormGroup>
                 <FormGroup className="contact__form">
-                  <Input placeholder="Email" type="email"
-                    name="email"
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    value={values.email} />
-                  {touched.email && errors.email && (
-                    <Error>{errors.email}</Error>
-                  )}
+                  <div className="form-group ">
+                    <label>Email</label>
+                    <input
+                      type="text"
+                      className={`form-control ${touched.email && errors.email ? 'is-invalid' : ''}`}
+                      name="email"
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      value={values.email}
+                    />
+                    {touched.email && errors.email &&
+                      <div className="invalid-feedback">{errors.email}</div>}
+                  </div>
                 </FormGroup>
                 <FormGroup className="contact__form">
-                  <textarea
-                    name="message"
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    value={values.message}
-                    rows="5"
-                    placeholder="Message"
-                    className="textarea"
-                  ></textarea>
+                  <div className="form-group ">
+                    <label>Message</label>
+                    <textarea
+                      name="message"
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      value={values.message}
+                      rows={5}
+                      type="textarea"
+                      className={`form-control ${touched.messag && errors.messag ? 'is-invalid' : ''}`}
+                      placeholder="Write"
+                    />
+                  </div>
                 </FormGroup>
                 {isLoad ? (<Spinner class="spinner" />) : (
                   <button className="contact__btn" type="submit">
@@ -193,30 +210,33 @@ const Contact = () => {
               <div className="contact__info">
                 <h6 className="fw-bold">Contact Information</h6>
                 <p className="section__description mb-0">
-                  123 ZindaBazar, Sylhet, Bangladesh
+                  {headOffice?.address}
                 </p>
                 <div className="d-flex align-items-center gap-2">
                   <h6 className="fs-6 mb-0">Phone:</h6>
-                  <p className="section__description mb-0">+88683896366</p>
+                  <p className="section__description mb-0">{headOffice?.phone}</p>
                 </div>
 
                 <div className="d-flex align-items-center gap-2">
                   <h6 className="mb-0 fs-6">Email:</h6>
-                  <p className="section__description mb-0">example@gmail.com</p>
+                  <p className="section__description mb-0">{headOffice?.email}</p>
                 </div>
 
                 <h6 className="fw-bold mt-4">Follow Us</h6>
 
                 <div className="d-flex align-items-center gap-4 mt-3">
-                  {socialLinks.map((item, index) => (
-                    <Link
-                      to={item.url}
-                      key={index}
-                      className="social__link-icon"
-                    >
-                      <i className={item.icon}></i>
-                    </Link>
-                  ))}
+                  <a href={headOffice?.facebook} target="_blank" className="social__link-icon">
+                    <i className="ri-facebook-line" />
+                  </a>
+                  <a href={headOffice?.instagram} target="_blank" className="social__link-icon">
+                    <i className="ri-instagram-line" />
+                  </a>
+                  <a href={headOffice?.linked_in} target="_blank" className="social__link-icon">
+                    <i className="ri-linkedin-line" />
+                  </a>
+                  <a href={headOffice?.twitter} target="_blank" className="social__link-icon">
+                    <i className="ri-twitter-line" />
+                  </a>
                 </div>
               </div>
             </Col>
@@ -228,11 +248,6 @@ const Contact = () => {
 };
 
 export default Contact;
-
-const Error = styled.p`
-  color: red;
-  font-size: small;
-`
 
 const Spinner = styled.div`
    width: 30px;
