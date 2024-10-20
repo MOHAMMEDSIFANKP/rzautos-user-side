@@ -49,6 +49,18 @@ const getCarDetailsApi = (id) => {
         withCredentials: true,
     });
 };
+
+const getPopularSerivceApi = () => {
+    return api.get(`popular-services/`, {
+        withCredentials: true,
+    });
+};
+
+const getHeadOfficeApi = () => {
+    return api.get(`head-office/`, {
+        withCredentials: true,
+    });
+};
 // ----------------------------Post methods-------------------------------------//
 
 const postEnquiryApi = (values) => {
@@ -57,6 +69,14 @@ const postEnquiryApi = (values) => {
     });
 };
 
+const postResaleEnquiryApi = (values) => {
+    return api.post('resale-enquiry/', values, {
+        headers: {
+            'Content-Type': 'multipart/form-data',
+        },
+        withCredentials: true,
+    });
+};
 
 export{
     getSeoApi,
@@ -67,5 +87,8 @@ export{
     TransmissionApi,
     FuelTypesApi,
     getCarDetailsApi,
+    getPopularSerivceApi,
+    getHeadOfficeApi,
     postEnquiryApi,
+    postResaleEnquiryApi,
 }

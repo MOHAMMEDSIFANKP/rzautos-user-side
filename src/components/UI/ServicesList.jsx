@@ -4,7 +4,7 @@ import AOS from "aos";
 import "aos/dist/aos.css";
 import servicesData from "../../assets/data/serviceData";
 
-const ServicesList = () => {
+const ServicesList = ({data}) => {
   useEffect(() => {
     AOS.init({
       duration: 1000, // Animation duration
@@ -40,7 +40,7 @@ const ServicesList = () => {
           }
         `}
       </style>
-      {servicesData.map((item) => (
+      {data.map((item) => (
         <ServiceItem item={item} key={item.id} />
       ))}
     </>
@@ -62,11 +62,11 @@ const ServiceItem = ({ item }) => {
     >
       <div className="service__item" style={itemStyle}>
         <span className="mb-3 d-inline-block icon">
-          <i className={item.icon} />
+          <img src={item?.icon} alt="" width={14} />
         </span>
 
-        <h6>{item.title}</h6>
-        <p className="section__description">{item.desc}</p>
+        <h6>{item?.title}</h6>
+        <p className="section__description">{item?.description}</p>
       </div>
     </Col>
   );

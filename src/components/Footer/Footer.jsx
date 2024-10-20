@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import { Container, Row, Col, ListGroup, ListGroupItem } from "reactstrap";
 import { Link } from "react-router-dom";
 import "../../styles/footer.css";
+import { getHeadOfficeApi } from "../../services/services";
 
 const quickLinks = [
   { path: "/", display: "Home" },
@@ -12,6 +13,25 @@ const quickLinks = [
 ];
 
 const Footer = () => {
+  const [headOffice, setHeadOffice] = useState({})
+
+  const fetchData = async () => {
+    try {
+      const res = await getHeadOfficeApi();
+      const { data, StatusCode } = res.data;
+      if (StatusCode === 6000) {
+        setHeadOffice(data[0]);
+      } else {
+        setHeadOffice({});
+      }
+    } catch (error) {
+      setHeadOffice({});
+    }
+  };
+
+  useEffect(() => {
+    fetchData()
+  }, [])
   const date = new Date();
   const year = date.getFullYear();
   return (
@@ -27,11 +47,7 @@ const Footer = () => {
               </h1>
             </div>
             <p className="footer__logo-content">
-              RZ Autos is your trusted partner for quality used cars in the UK.
-              We provide a seamless and transparent car buying experience,
-              offering a wide selection of vehicles at competitive prices.
-              From family cars to luxury models, we ensure that every car
-              is inspected and ready for the road.
+              {headOffice?.footer_content}
             </p>
           </Col>
           <Col lg="4" md="4" sm="6" className="">
@@ -50,12 +66,12 @@ const Footer = () => {
           <Col lg="4" md="4" sm="6">
             <div className="mb-4">
               <h5 className="footer__link-title mb-4">Head Office</h5>
-              <p className="office__info">123 Zindabazar, Sylhet, Bangladesh</p>
-              <p className="office__info">Phone: +0995345875365</p>
+              <p className="office__info">{headOffice?.address}</p>
+              <p className="office__info">Phone: {headOffice?.phone}</p>
 
-              <p className="office__info">Email: muhib5532@gmail.com</p>
+              <p className="office__info">Email: {headOffice?.email}</p>
 
-              <p className="office__info">Office Time: 10am - 7pm</p>
+              <p className="office__info">Office Time: {headOffice?.office_hours}</p>
             </div>
           </Col>
 

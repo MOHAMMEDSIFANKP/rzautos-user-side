@@ -5,19 +5,17 @@ import "aos/dist/aos.css";
 import HeroSlider from "../components/UI/HeroSlider";
 import Helmet from "../components/Helmet/Helmet";
 import { Container, Row, Col } from "reactstrap";
-import FindCarForm from "../components/UI/FindCarForm";
 import AboutSection from "../components/UI/AboutSection";
 import ServicesList from "../components/UI/ServicesList";
-import carData from "../assets/data/carData";
 import CarItem from "../components/UI/CarItem";
 import BecomeDriverSection from "../components/UI/BecomeDriverSection";
 import Testimonial from "../components/UI/Testimonial";
-import BlogList from "../components/UI/BlogList";
 import Faq from "../components/UI/Faq";
-import { getCarsApi, getSeoApi } from "../services/services";
+import { getCarsApi, getPopularSerivceApi, getSeoApi } from "../services/services";
 
 const Home = () => {
   const [getCarData, setCarData] = useState([])
+  const [popularSerivce,setPopularSerivce] = useState([])
   const [seoData,setSeoData] = useState({})
 
   const fetchData = async () => {
@@ -33,6 +31,21 @@ const Home = () => {
     } catch (error) {
       console.log(error);
       setCarData([])
+    }
+  }
+  const fetchpopularSerivceData = async () => {
+    try {
+      const res = await getPopularSerivceApi()
+      const { data, StatusCode } = res.data
+      if (StatusCode === 6000) {
+        setPopularSerivce(data)
+      }
+      else {
+        setPopularSerivce([])
+      }
+    } catch (error) {
+      console.log(error);
+      setPopularSerivce([])
     }
   }
    // Seo Data
@@ -60,6 +73,7 @@ const Home = () => {
     });
     fetchData()
     fetchSeoData()
+    fetchpopularSerivceData()
   }, []);
 
   return (
@@ -82,7 +96,7 @@ const Home = () => {
               <h6 className="section__subtitle">See our</h6>
               <h2 className="section__title">Popular Services</h2>
             </Col>
-            <ServicesList />
+           {popularSerivce.length>0 && <ServicesList  data={popularSerivce}/>}
           </Row>
         </Container>
       </section>

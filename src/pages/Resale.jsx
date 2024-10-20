@@ -5,12 +5,15 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import CommonSection from "../components/UI/CommonSection";
 import AOS from 'aos';
 import 'aos/dist/aos.css';
+import { postResaleEnquiryApi } from '../services/services';
+import styled from 'styled-components';
+import Swal from 'sweetalert2';
 
 function Resale() {
   const [images, setImages] = useState([]);
   const [previewImages, setPreviewImages] = useState([]);
   const [imageNames, setImageNames] = useState([]);
-  const [imagePositions, setImagePositions] = useState([]);
+  const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
     AOS.init({
@@ -23,16 +26,12 @@ function Resale() {
     initialValues: {
       registration: '',
       transmission: '',
+      make: '',
+      model: '',
       fuelType: '',
       color: '',
       mileage: '',
       bodyType: '',
-      bhp: '',
-      co2Emissions: '',
-      doors: '',
-      keys: '',
-      owners: '',
-      registrationDate: '',
       name: '',
       email: '',
       phoneNumber: ''
@@ -40,24 +39,77 @@ function Resale() {
     validationSchema: Yup.object({
       registration: Yup.string().required('Registration is required'),
       transmission: Yup.string().required('Transmission is required'),
+      make: Yup.string().required('make is required'),
+      model: Yup.string().required('model is required'),
       fuelType: Yup.string().required('Fuel Type is required'),
       color: Yup.string().required('Color is required'),
       mileage: Yup.number().required('Mileage is required').positive().integer(),
       bodyType: Yup.string().required('Body Type is required'),
-      bhp: Yup.number().required('BHP is required').positive(),
-      co2Emissions: Yup.string().required('CO2 Emissions is required'),
-      doors: Yup.number().required('Doors are required').positive().integer(),
-      keys: Yup.number().required('Keys are required').positive().integer(),
-      owners: Yup.number().required('Owners are required').positive().integer(),
-      registrationDate: Yup.date().required('Registration Date is required'),
       name: Yup.string().required('Name is required'),
       email: Yup.string().email('Invalid email address').required('Email is required'),
       phoneNumber: Yup.string().required('Phone Number is required')
     }),
-    onSubmit: (values) => {
-      console.log('Form Data:', values);
-      console.log('Uploaded Images:', images);
-      console.log('Image Positions:', imagePositions);
+    onSubmit: async (values) => {
+      setIsLoading(true)
+      try {
+        const formData = new FormData();
+        formData.append("name", values.name);
+        formData.append("email", values.email);
+        formData.append("number", values.phoneNumber);
+        formData.append("make", values.make);
+        formData.append("model", values.model);
+        formData.append("registration", values.registration);
+        formData.append("transmission", values.transmission);
+        formData.append("fuel_type", values.fuelType);
+        formData.append("color", values.color);
+        formData.append("mileage", values.mileage);
+        formData.append("body_type", values.bodyType);
+        images.forEach((image) => {
+          formData.append("images", image);
+        });
+
+        const res = await postResaleEnquiryApi(formData)
+        if (res.data.StatusCode === 6001) {
+          formik.resetForm();
+          setImages([]);
+          setPreviewImages([]);
+          setImageNames([]);
+          Swal.fire({
+            title: "We received your ReSale Enquiry",
+            text: "We will contact you soon. Thank you for your enquiry.",
+            icon: "success",
+            background: 'white',
+            color: '#2B2B2B',
+            showConfirmButton: false,
+            timer: 3000
+          });
+        } else {
+          Swal.fire({
+            position: "top-end",
+            icon: "error",
+            title: "Oops...",
+            text: "Something went wrong!.",
+            showConfirmButton: false,
+            background: 'white',
+            color: '#2B2B2B',
+            timer: 1500
+          });
+        }
+      } catch (error) {
+        console.log(error);
+        Swal.fire({
+          position: "top-end",
+          icon: "error",
+          title: "Oops...",
+          text: "Something went wrong!.",
+          showConfirmButton: false,
+          background: 'white',
+          color: '#2B2B2B',
+          timer: 1500
+        });
+      } finally {
+        setIsLoading(false)
+      }
     }
   });
 
@@ -65,31 +117,20 @@ function Resale() {
     const files = Array.from(e.target.files);
     const newImages = [...images, ...files];
     const newImageNames = [...imageNames, ...files.map(file => file.name)];
-    const newImagePositions = [...imagePositions, ...Array(files.length).fill('')];
 
     setImages(newImages);
     setPreviewImages(newImages.map((file) => URL.createObjectURL(file)));
     setImageNames(newImageNames);
-    setImagePositions(newImagePositions);
   };
 
   const handleDeleteImage = (index) => {
     const newImages = images.filter((_, i) => i !== index);
     const newPreviewImages = previewImages.filter((_, i) => i !== index);
-    const newImageNames = imageNames.filter((_, i) => i !== index);
-    const newImagePositions = imagePositions.filter((_, i) => i !== index);
 
     setImages(newImages);
     setPreviewImages(newPreviewImages);
-    setImageNames(newImageNames);
-    setImagePositions(newImagePositions);
   };
 
-  const handlePositionChange = (index, value) => {
-    const newImagePositions = [...imagePositions];
-    newImagePositions[index] = value;
-    setImagePositions(newImagePositions);
-  };
 
   return (
     <>
@@ -100,6 +141,20 @@ function Resale() {
         <form onSubmit={formik.handleSubmit} data-aos="fade-right">
           <div className="row">
             <div className="col-md-6">
+              <div className="form-group mb-3">
+                <label>Make <small>(Compay name)</small></label>
+                <input
+                  type="text"
+                  className={`form-control ${formik.touched.make && formik.errors.make ? 'is-invalid' : ''}`}
+                  name="make"
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  value={formik.values.make}
+                />
+                {formik.touched.make && formik.errors.make ? (
+                  <div className="invalid-feedback">{formik.errors.make}</div>
+                ) : null}
+              </div>
               <div className="form-group mb-3">
                 <label>Registration</label>
                 <input
@@ -114,7 +169,6 @@ function Resale() {
                   <div className="invalid-feedback">{formik.errors.registration}</div>
                 ) : null}
               </div>
-
               <div className="form-group mb-3">
                 <label>Transmission</label>
                 <input
@@ -144,24 +198,23 @@ function Resale() {
                   <div className="invalid-feedback">{formik.errors.fuelType}</div>
                 ) : null}
               </div>
-
-              <div className="form-group mb-3">
-                <label>Color</label>
-                <input
-                  type="text"
-                  className={`form-control ${formik.touched.color && formik.errors.color ? 'is-invalid' : ''}`}
-                  name="color"
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  value={formik.values.color}
-                />
-                {formik.touched.color && formik.errors.color ? (
-                  <div className="invalid-feedback">{formik.errors.color}</div>
-                ) : null}
-              </div>
             </div>
 
             <div className="col-md-6">
+              <div className="form-group mb-3">
+                <label>Model</label>
+                <input
+                  type="text"
+                  className={`form-control ${formik.touched.model && formik.errors.model ? 'is-invalid' : ''}`}
+                  name="model"
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  value={formik.values.model}
+                />
+                {formik.touched.model && formik.errors.model ? (
+                  <div className="invalid-feedback">{formik.errors.model}</div>
+                ) : null}
+              </div>
               <div className="form-group mb-3">
                 <label>Mileage</label>
                 <input
@@ -191,19 +244,18 @@ function Resale() {
                   <div className="invalid-feedback">{formik.errors.bodyType}</div>
                 ) : null}
               </div>
-
               <div className="form-group mb-3">
-                <label>BHP</label>
+                <label>Color</label>
                 <input
-                  type="number"
-                  className={`form-control ${formik.touched.bhp && formik.errors.bhp ? 'is-invalid' : ''}`}
-                  name="bhp"
+                  type="text"
+                  className={`form-control ${formik.touched.color && formik.errors.color ? 'is-invalid' : ''}`}
+                  name="color"
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
-                  value={formik.values.bhp}
+                  value={formik.values.color}
                 />
-                {formik.touched.bhp && formik.errors.bhp ? (
-                  <div className="invalid-feedback">{formik.errors.bhp}</div>
+                {formik.touched.color && formik.errors.color ? (
+                  <div className="invalid-feedback">{formik.errors.color}</div>
                 ) : null}
               </div>
             </div>
@@ -230,7 +282,7 @@ function Resale() {
               <div className="form-group mb-3">
                 <label>Phone Number</label>
                 <input
-                  type="tel"
+                  type="number"
                   className={`form-control ${formik.touched.phoneNumber && formik.errors.phoneNumber ? 'is-invalid' : ''}`}
                   name="phoneNumber"
                   onChange={formik.handleChange}
@@ -297,27 +349,13 @@ function Resale() {
               ))}
             </div>
           )}
-
-          {previewImages.length > 0 && (
-            <div className="mb-3">
-              <h5>Image Positions</h5>
-              {previewImages.map((_, index) => (
-                <div key={index} className="mb-2">
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder={`Position for ${imageNames[index]}`}
-                    value={imagePositions[index]}
-                    onChange={(e) => handlePositionChange(index, e.target.value)}
-                  />
-                </div>
-              ))}
-            </div>
+          {isLoading ? (
+            <Spinner />
+          ) : (
+            <button type="submit" className="btn btn-primary mt-4" data-aos="fade-up">
+              Submit
+            </button>
           )}
-
-          <button type="submit" className="btn btn-primary mt-4" data-aos="fade-up">
-            Submit
-          </button>
         </form>
       </div>
     </>
@@ -325,3 +363,19 @@ function Resale() {
 }
 
 export default Resale;
+
+const Spinner = styled.div`
+   width: 30px;
+   height: 30px;
+   border-radius: 50%;
+   background: radial-gradient(farthest-side,var(--primary-cl) 94%,#0000) top/9px 9px no-repeat,
+          conic-gradient(#0000 30%,var(--primary-cl));
+   -webkit-mask: radial-gradient(farthest-side,#0000 calc(100% - 9px),#000 0);
+   animation: spinner-c7wet2 1s infinite linear;
+
+@keyframes spinner-c7wet2 {
+   100% {
+      transform: rotate(1turn);
+   }
+}
+`
