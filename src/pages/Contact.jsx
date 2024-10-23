@@ -193,16 +193,14 @@ const Contact = () => {
                       value={values.message}
                       rows={5}
                       type="textarea"
-                      className={`form-control ${touched.messag && errors.messag ? 'is-invalid' : ''}`}
+                      className={`form-control ${touched.message && errors.message ? 'is-invalid' : ''}`}
                       placeholder="Write"
                     />
                   </div>
                 </FormGroup>
-                {isLoad ? (<Spinner class="spinner" />) : (
-                  <button className="contact__btn" type="submit">
-                    Send Message
-                  </button>
-                )}
+                <button className="contact__btn" type="submit" disabled={isLoad}>
+                  {isLoad ? "Sending..." : "Send Message"}
+                </button>
               </Form>
             </Col>
 
@@ -248,19 +246,3 @@ const Contact = () => {
 };
 
 export default Contact;
-
-const Spinner = styled.div`
-   width: 30px;
-   height: 30px;
-   border-radius: 50%;
-   background: radial-gradient(farthest-side,var(--primary-cl) 94%,#0000) top/9px 9px no-repeat,
-          conic-gradient(#0000 30%,var(--primary-cl));
-   -webkit-mask: radial-gradient(farthest-side,#0000 calc(100% - 9px),#000 0);
-   animation: spinner-c7wet2 1s infinite linear;
-
-@keyframes spinner-c7wet2 {
-   100% {
-      transform: rotate(1turn);
-   }
-}
-`

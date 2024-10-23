@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import AOS from "aos";
 import "aos/dist/aos.css";
-
 import HeroSlider from "../components/UI/HeroSlider";
 import Helmet from "../components/Helmet/Helmet";
 import { Container, Row, Col } from "reactstrap";
@@ -14,81 +13,47 @@ import Faq from "../components/UI/Faq";
 import { getCarsApi, getPopularSerivceApi, getSeoApi } from "../services/services";
 
 const Home = () => {
-  const [getCarData, setCarData] = useState([])
-  const [popularSerivce,setPopularSerivce] = useState([])
-  const [seoData,setSeoData] = useState({})
+  const [carData, setCarData] = useState([]);
+  const [popularService, setPopularService] = useState([]);
+  const [seoData, setSeoData] = useState({});
 
   const fetchData = async () => {
     try {
-      const res = await getCarsApi()
-      const { data, StatusCode } = res.data
-      if (StatusCode === 6000) {
-        setCarData(data)
-      }
-      else {
-        setCarData([])
-      }
+      const [carsRes, servicesRes, seoRes] = await Promise.all([
+        getCarsApi(),
+        getPopularSerivceApi(),
+        getSeoApi('/')
+      ]);
+
+      const [{ data: carData, StatusCode: carStatusCode }, { data: serviceData, StatusCode: serviceStatusCode }, { data: seoData, StatusCode: seoStatusCode }] = [carsRes.data, servicesRes.data, seoRes.data];
+
+      if (carStatusCode === 6000) setCarData(carData);
+      if (serviceStatusCode === 6000) setPopularService(serviceData);
+      if (seoStatusCode === 6000) setSeoData(seoData[0]);
     } catch (error) {
-      console.log(error);
-      setCarData([])
+      console.error("Error fetching data:", error);
+      // Optionally set error states or fallback values
+      setCarData([]);
+      setPopularService([]);
+      setSeoData({});
     }
-  }
-  const fetchpopularSerivceData = async () => {
-    try {
-      const res = await getPopularSerivceApi()
-      const { data, StatusCode } = res.data
-      if (StatusCode === 6000) {
-        setPopularSerivce(data)
-      }
-      else {
-        setPopularSerivce([])
-      }
-    } catch (error) {
-      console.log(error);
-      setPopularSerivce([])
-    }
-  }
-   // Seo Data
-   const fetchSeoData = async () => {
-    try {
-      const res = await getSeoApi('/')
-      const { data, StatusCode } = res.data
-      if (StatusCode === 6000) {
-        setSeoData(data[0])
-      }
-      else {
-        setSeoData({})
-      }
-    } catch (error) {
-      console.log(error);
-      setSeoData({})
-    }
-  }
+  };
 
   useEffect(() => {
-    AOS.init({
-      duration: 1000,
-      easing: "ease-in-out",
-      once: true,
-    });
-    fetchData()
-    fetchSeoData()
-    fetchpopularSerivceData()
+    AOS.init({ duration: 1000, easing: "ease-in-out", once: true });
+    fetchData();
   }, []);
 
   return (
-    <Helmet title={seoData?.meta_title || "RZAUTOS | Home"}>
-      {/* ============= hero section =========== */}
+    <Helmet title={seoData.meta_title || "RZAUTOS | Home"}>
       <section className="p-0 hero__slider-section" data-aos="fade-up">
         <HeroSlider />
       </section>
 
-      {/* =========== about section ================ */}
       <section data-aos="fade-up">
         <AboutSection />
       </section>
 
-      {/* ========== services section ============ */}
       <section data-aos="fade-up">
         <Container>
           <Row>
@@ -96,12 +61,15 @@ const Home = () => {
               <h6 className="section__subtitle">See our</h6>
               <h2 className="section__title">Popular Services</h2>
             </Col>
-           {popularSerivce.length>0 && <ServicesList  data={popularSerivce}/>}
+            {popularService.length > 0 ? (
+              <ServicesList data={popularService} />
+            ) : (
+              <p>No popular services found.</p> 
+            )}
           </Row>
         </Container>
       </section>
 
-      {/* =========== car offer section ============= */}
       <section data-aos="fade-up">
         <Container>
           <Row>
@@ -109,26 +77,24 @@ const Home = () => {
               <h6 className="section__subtitle">Come with</h6>
               <h2 className="section__title">Hot Offers</h2>
             </Col>
-            {getCarData.map((item) => (
-              <CarItem item={item} key={item.id} />
-            ))}
+            {carData.length > 0 ? (
+              carData.map((item) => <CarItem item={item} key={item.id} />)
+            ) : (
+              <p>No cars available at the moment.</p> 
+            )}
           </Row>
         </Container>
       </section>
 
-
-
-      {/* =========== become a driver section ============ */}
       <section data-aos="fade-up">
         <BecomeDriverSection />
       </section>
 
-      {/* =========== testimonial section =========== */}
       <section data-aos="fade-up">
         <Container>
           <Row>
             <Col lg="12" className="mb-4 text-center">
-              <h6 className="section__subtitle">Our clients says</h6>
+              <h6 className="section__subtitle">Our clients say</h6>
               <h2 className="section__title">Testimonials</h2>
             </Col>
             <Testimonial />
@@ -136,12 +102,11 @@ const Home = () => {
         </Container>
       </section>
 
-      {/* =============== Faq section =========== */}
       <section data-aos="fade-up">
         <Container>
           <Row>
             <Col lg="12" className="mb-5 text-center">
-              <h2 className="section__title">Faq</h2>
+              <h2 className="section__title">FAQ</h2>
             </Col>
             <Faq />
           </Row>
