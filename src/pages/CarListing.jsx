@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { Container, Row, Col } from "reactstrap";
 import Helmet from "../components/Helmet/Helmet";
 import CommonSection from "../components/UI/CommonSection";
@@ -9,6 +9,7 @@ import { FuelTypesApi, getCarsApi, getSeoApi, TransmissionApi } from "../service
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import Skelten from "../components/UI/Skelten";
+import debounce from "lodash.debounce";
 
 const CarListing = () => {
   const [filters, setFilters] = useState({
@@ -22,8 +23,8 @@ const CarListing = () => {
   const [transmissionOptions, setTransmissionOptions] = useState([]);
   const [fuelTypeOptions, setFuelTypeOptions] = useState([]);
 
-  // Fetch Car Data
-  const fetchData = async () => {
+  // Fetch car data with memoized debounce
+  const fetchData = useCallback(debounce(async () => {
     try {
       const { price, transmission, fuelType, search } = filters;
       const res = await getCarsApi('all', search, transmission?.value || "", fuelType?.value || "", price?.value || "");
@@ -36,10 +37,10 @@ const CarListing = () => {
     } catch (error) {
       setCarData([]);
     }
-  };
+  }, 300), [filters]);
 
-  // Fetch SEO Data
-  const fetchSeoData = async () => {
+  // Fetch SEO data
+  const fetchSeoData = useCallback(async () => {
     try {
       const res = await getSeoApi('/cars');
       const { data, StatusCode } = res.data;
@@ -51,34 +52,30 @@ const CarListing = () => {
     } catch (error) {
       setSeoData({});
     }
-  };
+  }, []);
 
-  // Fetch Filter Options
-  const fetchFilterData = async () => {
+  // Fetch filter options
+  const fetchFilterData = useCallback(async () => {
     try {
       const [transRes, fuelRes] = await Promise.all([TransmissionApi(), FuelTypesApi()]);
       if (transRes.data.StatusCode === 6000) {
-        setTransmissionOptions(
-          transRes.data.data.map((trans) => ({
-            value: trans.transmission,
-            label: trans.transmission,
-          }))
-        );
+        setTransmissionOptions(transRes.data.data.map(trans => ({
+          value: trans.transmission,
+          label: trans.transmission,
+        })));
       }
       if (fuelRes.data.StatusCode === 6000) {
-        setFuelTypeOptions(
-          fuelRes.data.data.map((fuel) => ({
-            value: fuel.fuel_type,
-            label: fuel.fuel_type,
-          }))
-        );
+        setFuelTypeOptions(fuelRes.data.data.map(fuel => ({
+          value: fuel.fuel_type,
+          label: fuel.fuel_type,
+        })));
       }
     } catch (error) {
       console.error("Error fetching filter data:", error);
       setTransmissionOptions([]);
       setFuelTypeOptions([]);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchSeoData();
@@ -88,13 +85,12 @@ const CarListing = () => {
       duration: 1000,
       once: true
     });
-  }, []);
+  }, [fetchSeoData, fetchFilterData]);
 
   useEffect(() => {
     fetchData();
-  }, [filters]); // Fetch data when filters change
+  }, [filters, fetchData]);
 
-  // Handle Filter Changes
   const handleFilterChange = (filterName, option) => {
     setFilters((prevFilters) => ({
       ...prevFilters,
@@ -102,17 +98,17 @@ const CarListing = () => {
     }));
   };
 
-  // Clear Handler
   const clearHandler = () => {
     setFilters({
       price: null,
       transmission: null,
       fuelType: null,
       search: ''
-    })
-  }
-  // Style
-  const customStyles = {
+    });
+  };
+
+  // Moved custom styles outside to prevent recreation on every render
+  const customStyles = useMemo(() => ({
     control: (provided, state) => ({
       ...provided,
       borderColor: state.isFocused ? '#000d6b' : provided.borderColor,
@@ -148,8 +144,7 @@ const CarListing = () => {
       ...base,
       zIndex: 1000,
     }),
-
-  };
+  }), []);
 
   return (
     <Helmet title={seoData?.meta_title || "Cars"}>
@@ -196,18 +191,21 @@ const CarListing = () => {
                   </button>
                 </SearchBox>
                 <ClearBtn onClick={clearHandler}>
-                  clear
+                  Clear
                 </ClearBtn>
               </FilterBox>
             </Col>
 
             {carData === null ? (
               <Skelten />
+            ) : carData.length === 0 ? (
+              <DataNotFound>No cars found</DataNotFound>  
             ) : (
               carData.map((item) => (
                 <CarItem item={item} key={item.id} />
               ))
             )}
+
           </Row>
         </Container>
       </Section>
@@ -215,7 +213,7 @@ const CarListing = () => {
   );
 };
 
-export default CarListing;
+export default React.memo(CarListing);
 
 const Section = styled.section`
   @media (max-width:767px){
@@ -286,4 +284,8 @@ const ClearBtn = styled.button`
     background-color: var(--primary-cl);
     color: white;
   }
+`
+
+const DataNotFound = styled.div`
+  height: 300px;
 `

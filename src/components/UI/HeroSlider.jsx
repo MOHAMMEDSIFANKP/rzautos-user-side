@@ -4,7 +4,6 @@ import { Container } from "reactstrap";
 import { Link } from "react-router-dom";
 import "../../styles/hero-slider.css";
 
-import sliderImage from '../../assets/all-images/slider-img/slider-1.jpg'
 import styled from "styled-components";
 import { getHomePageCarouselApi } from "../../services/services";
 

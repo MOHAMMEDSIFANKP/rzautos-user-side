@@ -1,8 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import styled from "styled-components";
 import { motion } from "framer-motion";
-
-// Images and logos
 import LogoImage from '../../assets/all-images/logo/logo.png';
 import mobtoggoleIcon from '../../assets/icons/mobtoggole.svg';
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -10,32 +8,39 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 const navLinks = [
   { path: "/", display: "Home" },
   { path: "/cars", display: "Car Buy" },
-  { path: "/resale", display: "Car Resale" },
-
+  { path: "/part-of-exchange", display: "Part of Exchange" },
   { path: "/reviews-&-history", display: "Reviews & History" },
   { path: "/contact", display: "Contact" },
 ];
 
-const Header = () => {
-  const loction = useLocation()
+const Header = React.memo(() => {
+  const location = useLocation();
   const [showMobileNav, setShowMobileNav] = useState(false);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
-  const toggleMobileNav = () => {
-    setShowMobileNav(!showMobileNav);
-  };
+  const toggleMobileNav = useCallback(() => {
+    setShowMobileNav(prev => !prev);
+  }, []);
+
+  const handleNavigation = useCallback((path) => {
+    navigate(path);
+    if (showMobileNav) toggleMobileNav();
+  }, [navigate, showMobileNav, toggleMobileNav]);
 
   return (
-    <>
+    <React.Fragment>
       <Headers>
         <Container>
           <Logo className="image">
             <img src={LogoImage} alt="Logo" />
           </Logo>
           <ItemsContainer>
-            {navLinks.map((link,index) => (
+            {navLinks.map((link, index) => (
               <Ul key={index}>
-                <Li onClick={()=>navigate(`${link?.path}`)} className={`group ${loction.pathname === link?.path ? 'active':''}`}>
+                <Li
+                  onClick={() => handleNavigation(link.path)}
+                  className={`group ${location.pathname === link.path ? 'active' : ''}`}
+                >
                   {link.display}
                   <span></span>
                 </Li>
@@ -43,10 +48,10 @@ const Header = () => {
             ))}
           </ItemsContainer>
           <ContactBtnContainer>
-            <Button onClick={()=>navigate('/contact')}>Request a call</Button>
-            <MobileToggole onClick={toggleMobileNav}>
+            <Button onClick={() => handleNavigation('/contact')}>Request a call</Button>
+            <MobileToggle onClick={toggleMobileNav}>
               <img src={mobtoggoleIcon} alt="Toggle Menu" />
-            </MobileToggole>
+            </MobileToggle>
           </ContactBtnContainer>
         </Container>
       </Headers>
@@ -65,19 +70,19 @@ const Header = () => {
             {navLinks.map((link, index) => (
               <motion.p
                 key={index}
-                onClick={() => setShowMobileNav(false)}
+                onClick={() => handleNavigation(link.path)}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <Link to={link.path}>{link.display}</Link>
+                {link.display}
               </motion.p>
             ))}
           </MobileNavItems>
         </MobileNavContainer>
       )}
-    </>
+    </React.Fragment>
   );
-};
+});
 
 export default Header;
 
@@ -167,7 +172,7 @@ const ContactBtnContainer = styled.div`
   gap: 20px;
 `;
 
-const MobileToggole = styled.div`
+const MobileToggle = styled.div`
   display: none;
 
   @media (max-width: 768px) {
