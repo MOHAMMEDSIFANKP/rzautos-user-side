@@ -10,7 +10,7 @@ const quickLinks = [
   { path: "/", display: "Home" },
   { path: "/cars", display: "Car Buy" },
   { path: "/part-of-exchange", display: "Part of Exchange" },
-  { path: "/reviews-and-history", display: "Reviews & History" },
+  { path: "/eviews-&-history", display: "Reviews & History" },
   { path: "/contact", display: "Contact" },
 ];
 

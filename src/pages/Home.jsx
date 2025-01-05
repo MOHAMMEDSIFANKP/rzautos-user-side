@@ -45,7 +45,7 @@ const Home = () => {
   }, []);
 
   return (
-    <Helmet title={seoData.meta_title || "RZAUTOS | Home"}>
+    <Helmet title={seoData?.meta_title || "RZAUTOS | Home"}>
       <section className="p-0 hero__slider-section" data-aos="fade-up">
         <HeroSlider />
       </section>
