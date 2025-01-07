@@ -3,8 +3,10 @@ import { Col } from "reactstrap";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import servicesData from "../../assets/data/serviceData";
+import { useNavigate } from "react-router-dom";
 
-const ServicesList = ({data}) => {
+const ServicesList = ({ data }) => {
+  const navigate = useNavigate()
   useEffect(() => {
     AOS.init({
       duration: 1000, // Animation duration
@@ -41,13 +43,13 @@ const ServicesList = ({data}) => {
         `}
       </style>
       {data.map((item) => (
-        <ServiceItem item={item} key={item.id} />
+        <ServiceItem item={item} key={item.id} navigate={navigate} />
       ))}
     </>
   );
 };
 
-const ServiceItem = ({ item }) => {
+const ServiceItem = ({ item, navigate }) => {
   const itemStyle = {
     padding: '15px', // Keep the original padding
   };
@@ -58,7 +60,8 @@ const ServiceItem = ({ item }) => {
       md="4"
       sm="6"
       className="mb-3"
-      data-aos="fade-up" // AOS animation type
+      data-aos="fade-up"
+      onClick={()=>navigate('/cars')}
     >
       <div className="service__item" style={itemStyle}>
         <span className="mb-3 d-inline-block icon">

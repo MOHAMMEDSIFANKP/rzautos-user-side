@@ -8,8 +8,8 @@ import { getHeadOfficeApi } from "../../services/services";
 import logo from '../../assets/all-images/logo/logo.png'
 const quickLinks = [
   { path: "/", display: "Home" },
-  { path: "/cars", display: "Car Buy" },
-  { path: "/part-of-exchange", display: "Part of Exchange" },
+  { path: "/cars", display: "Cars for Sale" },
+  { path: "/part-of-exchange", display: "Part Exchange Reviews" },
   { path: "/eviews-&-history", display: "Reviews & History" },
   { path: "/contact", display: "Contact" },
 ];
